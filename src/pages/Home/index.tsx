@@ -1,3 +1,4 @@
+// pages/Home/index.tsx
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import ChartComponent, { LineBarChartData } from '../../components/ChartComponent';
@@ -27,30 +28,62 @@ export const Home: React.FC = () => {
 
       if (significantData.length > 0) {
         setBtcData(prevData => ({
-          labels: [...prevData.labels, significantData[0].timestamp],
-          datasets: [{ data: [...prevData.datasets[0].data, significantData[0].price] }],
-          volumes: [...prevData.volumes, significantData[0].volume],
-          variations: [...prevData.variations, significantData[0].variation]
+          labels: [...prevData.labels, ...significantData.filter(item => item.name === 'BTCUSDT').map(item => item.timestamp)],
+          datasets: [{ data: [...prevData.datasets[0].data, ...significantData.filter(item => item.name === 'BTCUSDT').map(item => item.price)] }],
+          volumes: [...prevData.volumes, ...significantData.filter(item => item.name === 'BTCUSDT').map(item => item.volume)],
+          variations: [...prevData.variations, ...significantData.filter(item => item.name === 'BTCUSDT').map(item => item.variation)]
         }));
 
         setEthData(prevData => ({
-          labels: [...prevData.labels, significantData[1].timestamp],
-          datasets: [{ data: [...prevData.datasets[0].data, significantData[1].price] }],
-          volumes: [...prevData.volumes, significantData[1].volume],
-          variations: [...prevData.variations, significantData[1].variation]
+          labels: [...prevData.labels, ...significantData.filter(item => item.name === 'ETHUSDT').map(item => item.timestamp)],
+          datasets: [{ data: [...prevData.datasets[0].data, ...significantData.filter(item => item.name === 'ETHUSDT').map(item => item.price)] }],
+          volumes: [...prevData.volumes, ...significantData.filter(item => item.name === 'ETHUSDT').map(item => item.volume)],
+          variations: [...prevData.variations, ...significantData.filter(item => item.name === 'ETHUSDT').map(item => item.variation)]
         }));
 
         setXrpData(prevData => ({
-          labels: [...prevData.labels, significantData[2].timestamp],
-          datasets: [{ data: [...prevData.datasets[0].data, significantData[2].price] }],
-          volumes: [...prevData.volumes, significantData[2].volume],
-          variations: [...prevData.variations, significantData[2].variation]
+          labels: [...prevData.labels, ...significantData.filter(item => item.name === 'XRPUSDT').map(item => item.timestamp)],
+          datasets: [{ data: [...prevData.datasets[0].data, ...significantData.filter(item => item.name === 'XRPUSDT').map(item => item.price)] }],
+          volumes: [...prevData.volumes, ...significantData.filter(item => item.name === 'XRPUSDT').map(item => item.volume)],
+          variations: [...prevData.variations, ...significantData.filter(item => item.name === 'XRPUSDT').map(item => item.variation)]
         }));
+      }
+    });
+
+    const tradeWs = connectWebSocket(TRADES_WS_URL!, (data) => {
+      const formattedData = formatTradeData(data);
+      const significantData = filterSignificantData([formattedData], symbols);
+
+      if (significantData.length > 0) {
+        const item = significantData[0];
+        if (item.name === 'BTCUSDT') {
+          setBtcData(prevData => ({
+            labels: [...prevData.labels, item.timestamp],
+            datasets: [{ data: [...prevData.datasets[0].data, item.price] }],
+            volumes: [...prevData.volumes, item.volume],
+            variations: [...prevData.variations, item.variation]
+          }));
+        } else if (item.name === 'ETHUSDT') {
+          setEthData(prevData => ({
+            labels: [...prevData.labels, item.timestamp],
+            datasets: [{ data: [...prevData.datasets[0].data, item.price] }],
+            volumes: [...prevData.volumes, item.volume],
+            variations: [...prevData.variations, item.variation]
+          }));
+        } else if (item.name === 'XRPUSDT') {
+          setXrpData(prevData => ({
+            labels: [...prevData.labels, item.timestamp],
+            datasets: [{ data: [...prevData.datasets[0].data, item.price] }],
+            volumes: [...prevData.volumes, item.volume],
+            variations: [...prevData.variations, item.variation]
+          }));
+        }
       }
     });
 
     return () => {
       priceWs.close();
+      tradeWs.close();
     };
   }, []);
 

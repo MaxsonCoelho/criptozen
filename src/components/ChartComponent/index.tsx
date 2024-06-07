@@ -32,6 +32,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ data, title, labels }) 
   const [highestPriceTime, setHighestPriceTime] = useState<string | null>(null);
   const [lowestPrice, setLowestPrice] = useState<number | null>(null);
   const [lowestPriceTime, setLowestPriceTime] = useState<string | null>(null);
+  const [pressedPoint, setPressedPoint] = useState<{ date: string, price: string } | null>(null);
 
   const chartData = data.datasets[0].data.map((y, i) => ({
     x: labels[i],
@@ -45,20 +46,29 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ data, title, labels }) 
   useEffect(() => {
     if (chartData.length > 0) {
       const maxPrice = Math.max(...chartData.map(d => d.y));
-      if (highestPrice === null || maxPrice > highestPrice) {
-        setHighestPrice(maxPrice);
-        const maxPriceTime = chartData.find(d => d.y === maxPrice)?.x;
-        setHighestPriceTime(maxPriceTime || '');
-      }
-      
       const minPrice = Math.min(...chartData.map(d => d.y));
-      if (lowestPrice === null || minPrice < lowestPrice) {
-        setLowestPrice(minPrice);
-        const minPriceTime = chartData.find(d => d.y === minPrice)?.x;
-        setLowestPriceTime(minPriceTime || '');
-      }
+      const maxPriceTime = chartData.find(d => d.y === maxPrice)?.x || '';
+      const minPriceTime = chartData.find(d => d.y === minPrice)?.x || '';
+      setHighestPrice(maxPrice);
+      setHighestPriceTime(maxPriceTime);
+      setLowestPrice(minPrice);
+      setLowestPriceTime(minPriceTime);
     }
-  }, [chartData]);
+  }, [data]);
+
+  useEffect(() => {
+    if (isActive) {
+      const closestPoint = chartData.reduce((prev, curr) => (
+        Math.abs(new Date(curr.x).getTime() - state.x.position.value) < Math.abs(new Date(prev.x).getTime() - state.x.position.value) ? curr : prev
+      ));
+
+      const formattedDate = format(new Date(closestPoint.x), 'dd/MM/yyyy HH:mm:ss');
+      const formattedPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(closestPoint.y);
+      setPressedPoint({ date: formattedDate, price: formattedPrice });
+    } else {
+      setPressedPoint(null);
+    }
+  }, [isActive, state.x.position.value]);
 
   if (!data || (data.datasets[0]?.data.length === 0)) {
     return <Text style={styles.dataText}>No data available</Text>;
@@ -68,9 +78,9 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ data, title, labels }) 
   const latestData = chartData[chartData.length - 1];
 
   // Format the date and price
-  const formattedDate = format(new Date(latestData.x), 'dd/MM/yyyy HH:mm:ss');
-  const formattedPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(latestData.y);
-  const isPriceDrop = latestData.variation < 0;
+  const formattedDate = latestData ? format(new Date(latestData.x), 'dd/MM/yyyy HH:mm:ss') : '';
+  const formattedPrice = latestData ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(latestData.y) : '';
+  const isPriceDrop = latestData && latestData.variation < 0;
 
   // Format the lowest and highest price date and time
   const formattedLowestPriceTime = lowestPriceTime ? format(new Date(lowestPriceTime), 'dd/MM/yyyy HH:mm:ss') : '';
@@ -83,20 +93,26 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ data, title, labels }) 
         <View style={styles.dataContainer}>
           {latestData && (
             <Text style={styles.dataText}>
-              Preço em tempo real: {isPriceDrop ? '-' : ''}{formattedPrice}{'\n'}
-              Hora: {formattedDate}
+              Preço em tempo real: {formattedPrice}{'\n'}
+              Dia/Hora: {formattedDate}
             </Text>
           )}
           {highestPrice !== null && highestPriceTime && (
             <Text style={[styles.dataText, styles.highestPrice]}>
-              Maior preço do Dia: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(highestPrice)} {'\n'}
+              Maior Preço do Dia: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(highestPrice)} {'\n'}
               Hora: {formattedHighestPriceTime}
             </Text>
           )}
           {lowestPrice !== null && lowestPriceTime && (
             <Text style={[styles.dataText, styles.lowestPrice]}>
-              Menor preço do Dia: -${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(lowestPrice)} {'\n'}
+              Menor Preço do Dia: -${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(lowestPrice)} {'\n'}
               Hora: {formattedLowestPriceTime}
+            </Text>
+          )}
+          {pressedPoint && (
+            <Text style={styles.dataText}>
+              Preço no ponto pressionado: {pressedPoint.price}{'\n'}
+              Dia/Hora: {pressedPoint.date}
             </Text>
           )}
         </View>
@@ -112,7 +128,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ data, title, labels }) 
                 connectMissingData={true}
               />
               {isActive && (
-                <ToolTip x={state.x.position} y={state.y.y.position} />
+                <Circle cx={state.x.position} cy={state.y.y.position} r={10} color="black" />
               )}
             </>
           )}
@@ -121,9 +137,5 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ data, title, labels }) 
     </View>
   );
 };
-
-function ToolTip({ x, y }: { x: SharedValue<number>; y: SharedValue<number> }) {
-  return <Circle cx={x} cy={y} r={8} color="black" />;
-}
 
 export default ChartComponent;

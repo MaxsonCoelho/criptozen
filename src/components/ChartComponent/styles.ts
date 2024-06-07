@@ -19,7 +19,7 @@ export const stylesCollections = () => {
       fontWeight: 'bold',
     },
     priceDrop: {
-      color: '#FF0000', 
+      color: '#FF3B3B', 
       fontWeight: 'bold',
     },
     highestPrice: {
@@ -27,12 +27,20 @@ export const stylesCollections = () => {
       fontWeight: 'bold',
     },
     lowestPrice: {
-      color: '#FF0000', 
+      color: '#FF3B3B', 
       fontWeight: 'bold',
     },
     chart: {
       height: 300,
       width: '100%',
+    },
+    tooltipContainer: {
+      backgroundColor: 'black',
+      padding: 4,
+      borderRadius: 4,
+    },
+    tooltipText: {
+      color: 'white',
     },
   });
 };
