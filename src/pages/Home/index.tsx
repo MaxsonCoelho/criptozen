@@ -1,74 +1,65 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
-import ChartComponent from '../../components/ChartComponent';
+import { View, Text, ScrollView } from 'react-native';
+import ChartComponent, { LineBarChartData } from '../../components/ChartComponent';
 import { connectWebSocket, formatPriceData, formatTradeData, CryptoData } from '../../services/websocketService';
 import Config from 'react-native-config';
 import { stylesCollections } from './styles';
 
 const { PRICE_WS_URL, TRADES_WS_URL } = Config;
 
-interface LineBarChartData {
-  labels: string[];
-  datasets: {
-    data: number[];
-  }[];
-}
-
-interface PieChartData {
-  key: string;
-  value: number;
-  svg: {
-    fill: string;
-  };
-  arc: {
-    outerRadius: string;
-    cornerRadius: number;
-  };
-}
+const filterSignificantData = (data: CryptoData[], symbols: string[]) => {
+  const MINIMUM_VOLUME = 1000;
+  return data.filter(item => symbols.includes(item.name) && item.volume >= MINIMUM_VOLUME);
+};
 
 export const Home: React.FC = () => {
-  const [priceData, setPriceData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }] });
-  const [tradeData, setTradeData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }] });
-  const [marketData, setMarketData] = useState<PieChartData[]>([]);
+  const [btcData, setBtcData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }], volumes: [], variations: [] });
+  const [ethData, setEthData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }], volumes: [], variations: [] });
+  const [xrpData, setXrpData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }], volumes: [], variations: [] });
   const styles = stylesCollections();
 
   useEffect(() => {
+    const symbols = ['BTCUSDT', 'ETHUSDT', 'XRPUSDT'];
+
     const priceWs = connectWebSocket(PRICE_WS_URL!, (data) => {
       const formattedData = formatPriceData(data);
-      setPriceData({
-        labels: formattedData.map(item => item.name),
-        datasets: [{ data: formattedData.map(item => item.price) }]
-      });
-    });
+      const significantData = filterSignificantData(formattedData, symbols);
 
-    const tradeWs = connectWebSocket(TRADES_WS_URL!, (data) => {
-      const formattedData = formatTradeData(data);
-      setTradeData(prevData => ({
-        labels: [...prevData.labels, formattedData.timestamp],
-        datasets: [{ data: [...prevData.datasets[0].data, formattedData.price] }]
-      }));
-    });
+      if (significantData.length > 0) {
+        setBtcData(prevData => ({
+          labels: [...prevData.labels, significantData[0].timestamp],
+          datasets: [{ data: [...prevData.datasets[0].data, significantData[0].price] }],
+          volumes: [...prevData.volumes, significantData[0].volume],
+          variations: [...prevData.variations, significantData[0].variation]
+        }));
 
-    // Simulando dados de mercado para exemplo
-    const simulatedMarketData: PieChartData[] = [
-      { key: 'BTC', value: 30000, svg: { fill: '#f00' }, arc: { outerRadius: '100%', cornerRadius: 10 } },
-      { key: 'ETH', value: 2000, svg: { fill: '#0f0' }, arc: { outerRadius: '100%', cornerRadius: 10 } },
-      { key: 'BNB', value: 300, svg: { fill: '#00f' }, arc: { outerRadius: '100%', cornerRadius: 10 } },
-    ];
-    setMarketData(simulatedMarketData);
+        setEthData(prevData => ({
+          labels: [...prevData.labels, significantData[1].timestamp],
+          datasets: [{ data: [...prevData.datasets[0].data, significantData[1].price] }],
+          volumes: [...prevData.volumes, significantData[1].volume],
+          variations: [...prevData.variations, significantData[1].variation]
+        }));
+
+        setXrpData(prevData => ({
+          labels: [...prevData.labels, significantData[2].timestamp],
+          datasets: [{ data: [...prevData.datasets[0].data, significantData[2].price] }],
+          volumes: [...prevData.volumes, significantData[2].volume],
+          variations: [...prevData.variations, significantData[2].variation]
+        }));
+      }
+    });
 
     return () => {
       priceWs.close();
-      tradeWs.close();
     };
   }, []);
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.header}>CryptoZen</Text>
-      <ChartComponent type="line" data={priceData} title="Preços em Tempo Real" labels={priceData.labels} />
-      <ChartComponent type="bar" data={tradeData} title="Trades em Tempo Real" labels={tradeData.labels} />
-      <ChartComponent type="pie" data={marketData} title="Dados do Mercado" labels={marketData.map(data => data.key)} />
-    </View>
+      <ChartComponent type="line" data={btcData} title="BTC - Preços em Tempo Real" labels={btcData.labels} />
+      <ChartComponent type="line" data={ethData} title="ETH - Preços em Tempo Real" labels={ethData.labels} />
+      <ChartComponent type="line" data={xrpData} title="XRP - Preços em Tempo Real" labels={xrpData.labels} />
+    </ScrollView>
   );
 };

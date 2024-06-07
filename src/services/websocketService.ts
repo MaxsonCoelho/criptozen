@@ -1,7 +1,8 @@
-
 export interface CryptoData {
   name: string;
   price: number;
+  volume: number; 
+  variation: number; 
   timestamp: string;
 }
 
@@ -24,18 +25,22 @@ export const connectWebSocket = (url: string, onMessage: (data: any) => void) =>
   return ws;
 };
 
-export const formatPriceData = (data: any[]): CryptoData[] => {
+export const formatPriceData = (data: any): CryptoData[] => {
   return data.map((item: any) => ({
-    name: item.s, // symbol
-    price: parseFloat(item.c), // last price
+    name: item.s,
+    price: parseFloat(item.c),
+    volume: parseFloat(item.q), 
+    variation: parseFloat(item.P), 
     timestamp: new Date().toISOString(),
   }));
 };
 
 export const formatTradeData = (data: any): CryptoData => {
   return {
-    name: data.s, // symbol
-    price: parseFloat(data.p), // price of the trade
+    name: data.s,
+    price: parseFloat(data.p),
+    volume: parseFloat(data.q), 
+    variation: 0,
     timestamp: new Date().toISOString(),
   };
 };

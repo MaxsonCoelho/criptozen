@@ -5,12 +5,12 @@ export const stylesCollections = () => {
         container: {
             flex: 1,
             padding: 16,
-            backgroundColor: '#00008B', // Dark Blue/Black Background
+            backgroundColor: '#00008B', 
           },
           header: {
             fontSize: 24,
             fontWeight: 'bold',
-            color: '#FFFFFF', // White Accent
+            color: '#FFFFFF', 
             textAlign: 'center',
             marginBottom: 20,
           },
