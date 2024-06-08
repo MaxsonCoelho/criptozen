@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Dimensions } from 'react-native';
-import { CartesianChart, Line, useChartPressState } from "victory-native";
-import { Circle } from "@shopify/react-native-skia";
-import type { SharedValue } from "react-native-reanimated";
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text } from 'react-native';
+import { CartesianChart, Line, Area, Bar, useChartPressState } from "victory-native";
+import { Circle, LinearGradient, useFont, vec, Text as SKText } from "@shopify/react-native-skia";
 import { stylesCollections } from './styles';
 import { format } from 'date-fns';
 
-type ChartType = 'line';
+type ChartType = 'line' | 'area' | 'bar';
 
 export interface LineBarChartData {
   labels: string[];
@@ -22,11 +21,13 @@ interface ChartComponentProps {
   data: LineBarChartData;
   title: string;
   labels: string[];
+  width: number;
+  height: number;
+  currency: string;
+  timeFilter: string;  // Adicionando o filtro de tempo como prop
 }
 
-const screenWidth = Dimensions.get('window').width;
-
-const ChartComponent: React.FC<ChartComponentProps> = ({ data, title, labels }) => {
+const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labels, width, height, currency, timeFilter }) => {
   const styles = stylesCollections();
   const [highestPrice, setHighestPrice] = useState<number | null>(null);
   const [highestPriceTime, setHighestPriceTime] = useState<string | null>(null);
@@ -34,14 +35,62 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ data, title, labels }) 
   const [lowestPriceTime, setLowestPriceTime] = useState<string | null>(null);
   const [pressedPoint, setPressedPoint] = useState<{ date: string, price: string } | null>(null);
 
-  const chartData = data.datasets[0].data.map((y, i) => ({
-    x: labels[i],
+  const filterDataByTime = (timeFilter: string) => {
+    const endTime = new Date().getTime();
+    let startTime: number;
+
+    switch (timeFilter) {
+      case '5m':
+        startTime = endTime - 5 * 60 * 1000;
+        break;
+      case '1h':
+        startTime = endTime - 60 * 60 * 1000;
+        break;
+      case '1d':
+        startTime = endTime - 24 * 60 * 60 * 1000;
+        break;
+      case '1m':
+        startTime = endTime - 30 * 24 * 60 * 60 * 1000;
+        break;
+      default:
+        startTime = endTime - 24 * 60 * 60 * 1000;
+    }
+
+    const filteredData = data.datasets[0].data.filter((_, i) => {
+      const timestamp = new Date(labels[i]).getTime();
+      return timestamp >= startTime && timestamp <= endTime;
+    });
+
+    return {
+      labels: labels.filter((label, i) => {
+        const timestamp = new Date(label).getTime();
+        return timestamp >= startTime && timestamp <= endTime;
+      }),
+      datasets: [{ data: filteredData }],
+      volumes: data.volumes.filter((_, i) => {
+        const timestamp = new Date(labels[i]).getTime();
+        return timestamp >= startTime && timestamp <= endTime;
+      }),
+      variations: data.variations.filter((_, i) => {
+        const timestamp = new Date(labels[i]).getTime();
+        return timestamp >= startTime && timestamp <= endTime;
+      }),
+    };
+  };
+
+  const filteredData = filterDataByTime(timeFilter);
+
+  const chartData = filteredData.datasets[0].data.map((y, i) => ({
+    x: filteredData.labels[i],
     y: y,
-    volume: data.volumes[i],
-    variation: data.variations[i]
+    volume: filteredData.volumes[i],
+    variation: filteredData.variations[i]
   }));
 
   const { state, isActive } = useChartPressState<{ x: string, y: { y: number } }>({ x: '', y: { y: 0 } });
+
+  const font = useFont(require("../../../assets/fonts/Roboto-Regular.ttf"), 12);
+  const chartFont = useFont(require("../../../assets/fonts/Roboto-Bold.ttf"), 30);
 
   useEffect(() => {
     if (chartData.length > 0) {
@@ -54,7 +103,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ data, title, labels }) 
       setLowestPrice(minPrice);
       setLowestPriceTime(minPriceTime);
     }
-  }, [data]);
+  }, [data, timeFilter]);
 
   useEffect(() => {
     if (isActive) {
@@ -63,7 +112,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ data, title, labels }) 
       ));
 
       const formattedDate = format(new Date(closestPoint.x), 'dd/MM/yyyy HH:mm:ss');
-      const formattedPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(closestPoint.y);
+      const formattedPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(closestPoint.y);
       setPressedPoint({ date: formattedDate, price: formattedPrice });
     } else {
       setPressedPoint(null);
@@ -74,22 +123,20 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ data, title, labels }) 
     return <Text style={styles.dataText}>No data available</Text>;
   }
 
-  // Get the latest price data
   const latestData = chartData[chartData.length - 1];
-
-  // Format the date and price
   const formattedDate = latestData ? format(new Date(latestData.x), 'dd/MM/yyyy HH:mm:ss') : '';
-  const formattedPrice = latestData ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(latestData.y) : '';
+  const formattedPrice = latestData ? new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(latestData.y) : '';
   const isPriceDrop = latestData && latestData.variation < 0;
-
-  // Format the lowest and highest price date and time
   const formattedLowestPriceTime = lowestPriceTime ? format(new Date(lowestPriceTime), 'dd/MM/yyyy HH:mm:ss') : '';
   const formattedHighestPriceTime = highestPriceTime ? format(new Date(highestPriceTime), 'dd/MM/yyyy HH:mm:ss') : '';
+  const value = `$${state.y.y.value.value.toFixed(2)}`;
+  const labelColor = 'white';
+  const lineColor = 'lightgrey';
 
   return (
-    <View style={styles.chartContainer}>
+    <View style={[styles.chartContainer, { width, height }]}>
       <Text style={styles.title}>{title}</Text>
-      <View style={{ height: 300, width: screenWidth }}>
+      <View style={{ height, width }}>
         <View style={styles.dataContainer}>
           {latestData && (
             <Text style={styles.dataText}>
@@ -99,29 +146,71 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ data, title, labels }) 
           )}
           {highestPrice !== null && highestPriceTime && (
             <Text style={[styles.dataText, styles.highestPrice]}>
-              Maior Preço do Dia: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(highestPrice)} {'\n'}
+              Maior Preço do Dia: {new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(highestPrice)} {'\n'}
               Hora: {formattedHighestPriceTime}
             </Text>
           )}
         </View>
         <View style={styles.graphics}>
-            <CartesianChart data={chartData} xKey="x" yKeys={["y"]} chartPressState={state}>
-            {({ points }) => (
-                <>
-                <Line
+          <CartesianChart
+            data={chartData}
+            xKey="x"
+            yKeys={["y"]}
+            domainPadding={{ top: 30 }}
+            axisOptions={{
+              font,
+              labelColor,
+              lineColor,
+            }}
+            chartPressState={state}
+          >
+            {({ points, chartBounds }) => (
+              <>
+                <SKText
+                  x={chartBounds.left + 10}
+                  y={40}
+                  font={chartFont}
+                  text={value}
+                  color={labelColor}
+                  style={"fill"}
+                />
+                {type === 'line' && (
+                  <Line
                     points={points.y}
                     color="red"
                     strokeWidth={3}
                     curveType="natural"
                     animate={{ type: "timing", duration: 300 }}
                     connectMissingData={true}
-                />
-                {isActive && (
-                    <Circle cx={state.x.position} cy={state.y.y.position} r={10} color="#00FF00" />
+                  />
                 )}
-                </>
+                {type === 'area' && (
+                  <Area
+                    points={points.y}
+                    y0={chartBounds.bottom}
+                    animate={{ type: "timing", duration: 500 }}
+                  >
+                    <LinearGradient
+                      start={vec(chartBounds.bottom, 200)}
+                      end={vec(chartBounds.bottom, chartBounds.bottom)}
+                      colors={["green", "#90ee9050"]}
+                    />
+                  </Area>
+                )}
+                {type === 'bar' && (
+                  <Bar
+                    points={points.y}
+                    chartBounds={chartBounds}
+                    color="blue"
+                    roundedCorners={{ topLeft: 10, topRight: 10 }}
+                  />
+                )}
+                {isActive && (
+                  <Circle cx={state.x.position} cy={state.y.y.position} r={10} color="#00FF00" />
+                )}
+              </>
             )}
-            </CartesianChart>
+          </CartesianChart>
         </View>
       </View>
     </View>

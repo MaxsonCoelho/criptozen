@@ -4,15 +4,19 @@ export const stylesCollections = () => {
     return StyleSheet.create({
       container: {
         flex: 1,
-        backgroundColor: '#181818',
-        padding: 16,
+        backgroundColor: '#3A3A3A',
       },
       header: {
         fontSize: 24,
         fontWeight: 'bold',
         color: '#FFFFFF',
+        marginTop: 10,
         textAlign: 'center',
-        marginBottom: 16,
+      },
+      buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginVertical: 10,
       },
     });
   };

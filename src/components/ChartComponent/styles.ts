@@ -4,7 +4,7 @@ export const stylesCollections = () => {
   return StyleSheet.create({
     chartContainer: {
       flex: 1,
-      backgroundColor: '#3A3A3A',
+      backgroundColor: '#FFFFFF',
       borderRadius: 8,
     },
     title: {
@@ -25,21 +25,13 @@ export const stylesCollections = () => {
       marginBottom: 4,
       fontWeight: 'bold',
     },
-    priceDrop: {
-      color: '#FF3B3B', 
-      fontWeight: 'bold',
-    },
     highestPrice: {
       color: '#00FF00',
       fontWeight: 'bold',
     },
     lowestPrice: {
-      color: '#FF3B3B', 
+      color: '#FF3B3B',
       fontWeight: 'bold',
-    },
-    chart: {
-      height: 250,
-      width: '100%',
     },
     graphics: {
       position: 'absolute',
@@ -47,14 +39,6 @@ export const stylesCollections = () => {
       height: '65%',
       width: '100%',
       backgroundColor: '#121212',
-    },
-    tooltipContainer: {
-      backgroundColor: 'black',
-      padding: 4,
-      borderRadius: 4,
-    },
-    tooltipText: {
-      color: 'white',
     },
   });
 };
