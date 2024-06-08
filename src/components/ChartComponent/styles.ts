@@ -2,15 +2,22 @@ import { StyleSheet } from 'react-native';
 
 export const stylesCollections = () => {
   return StyleSheet.create({
+    chartContainer: {
+      flex: 1,
+      backgroundColor: '#3A3A3A',
+      borderRadius: 8,
+    },
     title: {
       fontSize: 18,
       fontWeight: 'bold',
       color: '#FFFFFF',
-      marginBottom: 8,
+      marginTop: 5,
+      paddingHorizontal: 16,
     },
     dataContainer: {
       marginVertical: 16,
       fontWeight: 'bold',
+      paddingHorizontal: 16,
     },
     dataText: {
       fontSize: 14,
@@ -31,8 +38,15 @@ export const stylesCollections = () => {
       fontWeight: 'bold',
     },
     chart: {
-      height: 300,
+      height: 250,
       width: '100%',
+    },
+    graphics: {
+      position: 'absolute',
+      bottom: 0,
+      height: '65%',
+      width: '100%',
+      backgroundColor: '#121212',
     },
     tooltipContainer: {
       backgroundColor: 'black',

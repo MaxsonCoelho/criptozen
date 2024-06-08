@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import ChartComponent, { LineBarChartData } from '../../components/ChartComponent';
+import LinearGradient from 'react-native-linear-gradient';
 import { connectWebSocket, formatPriceData, formatTradeData, CryptoData } from '../../services/websocketService';
 import Config from 'react-native-config';
 import { stylesCollections } from './styles';
@@ -91,8 +92,8 @@ export const Home: React.FC = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.header}>CryptoZen</Text>
       <ChartComponent type="line" data={btcData} title="BTC - Preços em Tempo Real" labels={btcData.labels} />
-      <ChartComponent type="line" data={ethData} title="ETH - Preços em Tempo Real" labels={ethData.labels} />
-      <ChartComponent type="line" data={xrpData} title="XRP - Preços em Tempo Real" labels={xrpData.labels} />
+      {/* <ChartComponent type="line" data={ethData} title="ETH - Preços em Tempo Real" labels={ethData.labels} />
+      <ChartComponent type="line" data={xrpData} title="XRP - Preços em Tempo Real" labels={xrpData.labels} /> */}
     </ScrollView>
   );
 };

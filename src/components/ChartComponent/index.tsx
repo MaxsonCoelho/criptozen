@@ -87,7 +87,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ data, title, labels }) 
   const formattedHighestPriceTime = highestPriceTime ? format(new Date(highestPriceTime), 'dd/MM/yyyy HH:mm:ss') : '';
 
   return (
-    <View>
+    <View style={styles.chartContainer}>
       <Text style={styles.title}>{title}</Text>
       <View style={{ height: 300, width: screenWidth }}>
         <View style={styles.dataContainer}>
@@ -103,36 +103,26 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ data, title, labels }) 
               Hora: {formattedHighestPriceTime}
             </Text>
           )}
-          {lowestPrice !== null && lowestPriceTime && (
-            <Text style={[styles.dataText, styles.lowestPrice]}>
-              Menor Preço do Dia: -${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(lowestPrice)} {'\n'}
-              Hora: {formattedLowestPriceTime}
-            </Text>
-          )}
-          {pressedPoint && (
-            <Text style={styles.dataText}>
-              Preço no ponto pressionado: {pressedPoint.price}{'\n'}
-              Dia/Hora: {pressedPoint.date}
-            </Text>
-          )}
         </View>
-        <CartesianChart data={chartData} xKey="x" yKeys={["y"]} chartPressState={state}>
-          {({ points }) => (
-            <>
-              <Line
-                points={points.y}
-                color="red"
-                strokeWidth={3}
-                curveType="natural"
-                animate={{ type: "timing", duration: 300 }}
-                connectMissingData={true}
-              />
-              {isActive && (
-                <Circle cx={state.x.position} cy={state.y.y.position} r={10} color="black" />
-              )}
-            </>
-          )}
-        </CartesianChart>
+        <View style={styles.graphics}>
+            <CartesianChart data={chartData} xKey="x" yKeys={["y"]} chartPressState={state}>
+            {({ points }) => (
+                <>
+                <Line
+                    points={points.y}
+                    color="red"
+                    strokeWidth={3}
+                    curveType="natural"
+                    animate={{ type: "timing", duration: 300 }}
+                    connectMissingData={true}
+                />
+                {isActive && (
+                    <Circle cx={state.x.position} cy={state.y.y.position} r={10} color="#00FF00" />
+                )}
+                </>
+            )}
+            </CartesianChart>
+        </View>
       </View>
     </View>
   );

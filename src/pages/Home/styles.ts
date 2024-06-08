@@ -4,7 +4,7 @@ export const stylesCollections = () => {
     return StyleSheet.create({
       container: {
         flex: 1,
-        backgroundColor: '#00008B',
+        backgroundColor: '#181818',
         padding: 16,
       },
       header: {
