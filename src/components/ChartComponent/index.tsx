@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { CartesianChart, Line, Area, Bar, useChartPressState } from "victory-native";
 import { Circle, LinearGradient, useFont, vec, Text as SKText } from "@shopify/react-native-skia";
 import { stylesCollections } from './styles';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 
 type ChartType = 'line' | 'area' | 'bar';
 
@@ -22,9 +22,9 @@ interface ChartComponentProps {
   title: string;
   labels: string[];
   width: number;
-  height: number;
+  height?: number;
   currency: string;
-  timeFilter: string;  // Adicionando o filtro de tempo como prop
+  timeFilter: string; 
 }
 
 const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labels, width, height, currency, timeFilter }) => {
@@ -56,25 +56,31 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
         startTime = endTime - 24 * 60 * 60 * 1000;
     }
 
-    const filteredData = data.datasets[0].data.filter((_, i) => {
-      const timestamp = new Date(labels[i]).getTime();
-      return timestamp >= startTime && timestamp <= endTime;
+    const filteredLabels: string[] = [];
+    const filteredData: number[] = [];
+    const filteredVolumes: number[] = [];
+    const filteredVariations: number[] = [];
+
+    labels.forEach((label, i) => {
+      const date = new Date(label);
+      if (isValid(date)) {
+        const timestamp = date.getTime();
+        if (timestamp >= startTime && timestamp <= endTime) {
+          filteredLabels.push(format(date, 'HH:mm'));
+          filteredData.push(data.datasets[0].data[i]);
+          filteredVolumes.push(data.volumes[i]);
+          filteredVariations.push(data.variations[i]);
+        }
+      } else {
+        console.error(`Invalid date: ${label}`);
+      }
     });
 
     return {
-      labels: labels.filter((label, i) => {
-        const timestamp = new Date(label).getTime();
-        return timestamp >= startTime && timestamp <= endTime;
-      }),
+      labels: filteredLabels,
       datasets: [{ data: filteredData }],
-      volumes: data.volumes.filter((_, i) => {
-        const timestamp = new Date(labels[i]).getTime();
-        return timestamp >= startTime && timestamp <= endTime;
-      }),
-      variations: data.variations.filter((_, i) => {
-        const timestamp = new Date(labels[i]).getTime();
-        return timestamp >= startTime && timestamp <= endTime;
-      }),
+      volumes: filteredVolumes,
+      variations: filteredVariations,
     };
   };
 
@@ -111,9 +117,14 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
         Math.abs(new Date(curr.x).getTime() - state.x.position.value) < Math.abs(new Date(prev.x).getTime() - state.x.position.value) ? curr : prev
       ));
 
-      const formattedDate = format(new Date(closestPoint.x), 'dd/MM/yyyy HH:mm:ss');
-      const formattedPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(closestPoint.y);
-      setPressedPoint({ date: formattedDate, price: formattedPrice });
+      const date = new Date(closestPoint.x);
+      if (isValid(date)) {
+        const formattedDate = format(date, 'dd/MM/yyyy HH:mm:ss');
+        const formattedPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(closestPoint.y);
+        setPressedPoint({ date: formattedDate, price: formattedPrice });
+      } else {
+        console.error(`Invalid date: ${closestPoint.x}`);
+      }
     } else {
       setPressedPoint(null);
     }
@@ -124,11 +135,14 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
   }
 
   const latestData = chartData[chartData.length - 1];
-  const formattedDate = latestData ? format(new Date(latestData.x), 'dd/MM/yyyy HH:mm:ss') : '';
+  const latestDate = new Date(latestData.x);
+  const formattedDate = isValid(latestDate) ? format(latestDate, 'dd/MM/yyyy HH:mm:ss') : '';
   const formattedPrice = latestData ? new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(latestData.y) : '';
   const isPriceDrop = latestData && latestData.variation < 0;
-  const formattedLowestPriceTime = lowestPriceTime ? format(new Date(lowestPriceTime), 'dd/MM/yyyy HH:mm:ss') : '';
-  const formattedHighestPriceTime = highestPriceTime ? format(new Date(highestPriceTime), 'dd/MM/yyyy HH:mm:ss') : '';
+  const lowestDate = new Date(lowestPriceTime || '');
+  const highestDate = new Date(highestPriceTime || '');
+  const formattedLowestPriceTime = isValid(lowestDate) ? format(lowestDate, 'dd/MM/yyyy HH:mm:ss') : '';
+  const formattedHighestPriceTime = isValid(highestDate) ? format(highestDate, 'dd/MM/yyyy HH:mm:ss') : '';
   const value = `$${state.y.y.value.value.toFixed(2)}`;
   const labelColor = 'white';
   const lineColor = 'lightgrey';
@@ -156,7 +170,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
             data={chartData}
             xKey="x"
             yKeys={["y"]}
-            domainPadding={{ top: 30 }}
+            domainPadding={{ top: 70, bottom: 50, right: 30}}
             axisOptions={{
               font,
               labelColor,
@@ -178,10 +192,11 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
                   <Line
                     points={points.y}
                     color="red"
-                    strokeWidth={3}
-                    curveType="natural"
+                    strokeWidth={2}
+                    curveType="catmullRom"
                     animate={{ type: "timing", duration: 300 }}
                     connectMissingData={true}
+                    antiAlias={true}
                   />
                 )}
                 {type === 'area' && (
@@ -189,11 +204,14 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
                     points={points.y}
                     y0={chartBounds.bottom}
                     animate={{ type: "timing", duration: 500 }}
+                    antiAlias={true}
+                    blendMode='softLight'
+                    curveType='catmullRom'
                   >
                     <LinearGradient
-                      start={vec(chartBounds.bottom, 200)}
+                      start={vec(chartBounds.bottom, 150)}
                       end={vec(chartBounds.bottom, chartBounds.bottom)}
-                      colors={["green", "#90ee9050"]}
+                      colors={["green", "#58F75824"]}
                     />
                   </Area>
                 )}
@@ -203,10 +221,11 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
                     chartBounds={chartBounds}
                     color="blue"
                     roundedCorners={{ topLeft: 10, topRight: 10 }}
+                    animate={{ type: "timing", duration: 500 }}
                   />
                 )}
                 {isActive && (
-                  <Circle cx={state.x.position} cy={state.y.y.position} r={10} color="#00FF00" />
+                  <Circle cx={state.x.position} cy={state.y.y.position} r={8} color="#00BFFF" />
                 )}
               </>
             )}

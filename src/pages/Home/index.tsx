@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, Button, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, ScrollView, Button, Dimensions } from 'react-native';
 import ChartComponent, { LineBarChartData } from '../../components/ChartComponent';
 import { connectWebSocket, formatPriceData, formatTradeData, CryptoData } from '../../services/websocketService';
 import Config from 'react-native-config';
@@ -18,7 +18,7 @@ export const Home: React.FC = () => {
   const [xrpData, setXrpData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }], volumes: [], variations: [] });
   const [selectedCurrency, setSelectedCurrency] = useState('BTCUSDT');
   const [timeFilter, setTimeFilter] = useState('1d');
-  const [chartType, setChartType] = useState<'line' | 'area' | 'bar'>('line');
+  const [chartType, setChartType] = useState<'line' | 'area' | 'bar'>('area');
   const styles = stylesCollections();
 
   useEffect(() => {
@@ -127,7 +127,6 @@ export const Home: React.FC = () => {
         title={`${selectedCurrency} - Preços em Tempo Real`}
         labels={getCurrentData().labels}
         width={Dimensions.get('window').width}
-        height={300}
         currency={selectedCurrency.slice(0, 3)} 
         timeFilter={timeFilter}
       />

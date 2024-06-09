@@ -4,8 +4,9 @@ export const stylesCollections = () => {
   return StyleSheet.create({
     chartContainer: {
       flex: 1,
-      backgroundColor: '#FFFFFF',
+      backgroundColor: '#000',
       borderRadius: 8,
+      height: 600,
     },
     title: {
       fontSize: 18,
@@ -34,9 +35,7 @@ export const stylesCollections = () => {
       fontWeight: 'bold',
     },
     graphics: {
-      position: 'absolute',
-      bottom: 0,
-      height: '65%',
+      height: 350,
       width: '100%',
       backgroundColor: '#121212',
     },
