@@ -121,7 +121,7 @@ const getAnimationSource = (routeName: string) => {
 
 export const BottomTabs = () => {
   return (
-    <Tab.Navigator tabBar={(props) => <MyTabBar {...props} />}>
+    <Tab.Navigator screenOptions={{ headerShown: false }} tabBar={(props) => <MyTabBar {...props} />}>
       <Tab.Screen name="Início" component={Home} />
       <Tab.Screen name="Portfólio" component={Portfolio} />
       <Tab.Screen name="Transações" component={Transactions} />

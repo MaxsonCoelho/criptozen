@@ -24,7 +24,7 @@ interface ChartComponentProps {
   width: number;
   height?: number;
   currency: string;
-  timeFilter: string; 
+  timeFilter: string;
 }
 
 const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labels, width, height, currency, timeFilter }) => {
@@ -32,12 +32,13 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
   const [highestPrice, setHighestPrice] = useState<number | null>(null);
   const [highestPriceTime, setHighestPriceTime] = useState<string | null>(null);
   const [lowestPrice, setLowestPrice] = useState<number | null>(null);
+  const [showLatestPrice, setShowLatestPrice] = useState<boolean>(true);
 
   const { state, isActive } = useChartPressState<{ x: string, y: { y: number } }>({ x: '', y: { y: 0 } });
 
   const font = useFont(require("../../../assets/fonts/Roboto-Regular.ttf"), 12);
   const chartFont = useFont(require("../../../assets/fonts/Roboto-Bold.ttf"), 30);
-
+  console.log('data', data);
   const filterDataByTime = useCallback((timeFilter: string) => {
     const endTime = new Date().getTime();
     let startTime: number;
@@ -87,7 +88,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
     };
   }, [labels, data]);
 
-  const filteredData = useMemo(() => filterDataByTime(timeFilter), [filterDataByTime, timeFilter]);
+  const filteredData = useMemo(() => filterDataByTime(timeFilter), [filterDataByTime, timeFilter, data, labels]);
 
   const chartData = useMemo(() => filteredData.datasets[0].data.map((y, i) => ({
     x: filteredData.labels[i],
@@ -109,6 +110,17 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
     }
   }, [chartData]);
 
+  useEffect(() => {
+    if (!isActive) {
+      const timeout = setTimeout(() => {
+        setShowLatestPrice(true);
+      }, 2000);
+      return () => clearTimeout(timeout);
+    } else {
+      setShowLatestPrice(false);
+    }
+  }, [isActive]);
+
   const formatCurrency = useCallback((value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(value), [currency]);
 
   const latestFormattedDate = useMemo(() => new Date().toLocaleString('pt-BR'), []);
@@ -117,11 +129,11 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
   const value = useMemo(() => `$${state.y.y.value.value.toFixed(2)}`, [state.y.y.value.value]);
   const labelColor = 'white';
   const lineColor = 'lightgrey';
-
+  
   if (!data || (data.datasets[0]?.data.length === 0)) {
     return <Text style={styles.dataText}>No data available</Text>;
   }
-
+  
   return (
     <View style={[styles.chartContainer, { width, height }]}>
       <Text style={styles.title}>{title}</Text>
@@ -160,7 +172,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
                   x={chartBounds.left + 10}
                   y={40}
                   font={chartFont}
-                  text={value}
+                  text={showLatestPrice ? latestFormattedPrice : value}
                   color={labelColor}
                   style={"fill"}
                 />
