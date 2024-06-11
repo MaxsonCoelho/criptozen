@@ -9,6 +9,7 @@ import CurrencyList from '../../components/CurrencyList';
 import { useCurrency } from '../../contexts/currency';
 import ButtonGeneric from '../../components/GenericButton';
 import { useThemeStyle } from '../../contexts/theme';
+import GenericLoading from '../../components/GenericLoading';
 
 const { PRICE_WS_URL, TRADES_WS_URL } = Config;
 
@@ -85,8 +86,9 @@ export const Home: React.FC = () => {
       <Header />
       <ScrollView>
         <Text style={styles.header}>CryptoZen</Text>
-        <View style={styles.buttonContainer}>
-          <CurrencyList data={cryptoData} />
+        <View style={[styles.buttonContainer, {alignItems: 'center', justifyContent: 'center'}]}>
+          {cryptoData.length === 0 && <GenericLoading />}
+          {cryptoData.length > 0 && <CurrencyList data={cryptoData} />}
         </View>
         <View style={styles.buttonContainer}>
           <ButtonGeneric title="5 Min" executeFunction={() => setTimeFilter('5m')} color={theme.surfaceContainerLowest} selected={timeFilter === '5m'} />
@@ -99,14 +101,19 @@ export const Home: React.FC = () => {
           <ButtonGeneric title="Area" executeFunction={() => setChartType('area')} color={theme.surfaceContainerLowest} selected={chartType === 'area'} />
           <ButtonGeneric title="Bar" executeFunction={() => setChartType('bar')} color={theme.surfaceContainerLowest} selected={chartType === 'bar'} />
         </View>
-        <ChartComponent
-          type={chartType}
-          data={getCurrentData()}
-          labels={getCurrentData().labels}
-          width={Dimensions.get('window').width}
-          currency={selectedCurrency.slice(0, 3)}
-          timeFilter={timeFilter}
-        />
+        <View style={[styles.chartContainer, {height: getCurrentData().labels.length == 0 ? 200 : 'auto'}]}>
+          {getCurrentData().labels.length === 0 && <GenericLoading />}
+          {getCurrentData().labels.length > 0 &&
+            <ChartComponent
+              type={chartType}
+              data={getCurrentData()}
+              labels={getCurrentData().labels}
+              width={Dimensions.get('window').width}
+              currency={selectedCurrency.slice(0, 3)}
+              timeFilter={timeFilter}
+            />
+          }
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

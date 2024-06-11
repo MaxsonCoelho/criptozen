@@ -20,6 +20,10 @@ export const stylesCollections = () => {
       justifyContent: 'space-around',
       marginVertical: 5,
     },
+    chartContainer: {
+      alignItems: 'center', 
+      justifyContent: 'center'
+    }
   });
 };
   
