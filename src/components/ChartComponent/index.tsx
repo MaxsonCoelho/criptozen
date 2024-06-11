@@ -33,7 +33,6 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
   const [highestPriceTime, setHighestPriceTime] = useState<string | null>(null);
   const [lowestPrice, setLowestPrice] = useState<number | null>(null);
   const [showLatestPrice, setShowLatestPrice] = useState<boolean>(true);
-
   const { state, isActive } = useChartPressState<{ x: string, y: { y: number } }>({ x: '', y: { y: 0 } });
 
   const font = useFont(require("../../../assets/fonts/Roboto-Regular.ttf"), 12);

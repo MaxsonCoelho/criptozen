@@ -15,10 +15,10 @@ interface ButtonProps {
   color?: string;
   width?: number | undefined | `${number}%`;
   executeFunction?: () => void;
-  handleSubmitForm?: (values: any) => Promise<void>;
   title: string;
   colorTitle?: string;
   iconLeft?: HeaderLeft;
+  selected?: boolean;
 }
 
 export default function ButtonGeneric({
@@ -26,9 +26,9 @@ export default function ButtonGeneric({
   width,
   executeFunction,
   title,
-  handleSubmitForm,
   colorTitle,
-  iconLeft
+  iconLeft,
+  selected = false
 }: ButtonProps): JSX.Element {
   const styles = stylesCollections();
   const { theme } = useThemeStyle();
@@ -42,9 +42,9 @@ export default function ButtonGeneric({
           backgroundColor: color,
           flexDirection: iconLeft && 'row'!!,
           alignItems: iconLeft && 'center'!!
-        },
+        }, selected && styles.selectedButton
       ]}
-      onPress={executeFunction || handleSubmitForm}
+      onPress={executeFunction}
       activeOpacity={0.7}
       testID='button-generic'
     >

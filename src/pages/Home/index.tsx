@@ -316,15 +316,15 @@ export const Home: React.FC = () => {
           <CurrencyList data={cryptoData} />
         </View>
         <View style={styles.buttonContainer}>
-          <ButtonGeneric title="5 Min" executeFunction={() => setTimeFilter('5m')} color={theme.surfaceContainerLowest}  />
-          <ButtonGeneric title="1 Hour" executeFunction={() => setTimeFilter('1h')} color={theme.surfaceContainerLowest} />
-          <ButtonGeneric title="1 Day" executeFunction={() => setTimeFilter('1d')} color={theme.surfaceContainerLowest} />
-          <ButtonGeneric title="1 Month" executeFunction={() => setTimeFilter('1m')} color={theme.surfaceContainerLowest} />
+          <ButtonGeneric title="5 Min" executeFunction={() => setTimeFilter('5m')} color={theme.surfaceContainerLowest} selected={timeFilter == '5m' && true} />
+          <ButtonGeneric title="1 Hour" executeFunction={() => setTimeFilter('1h')} color={theme.surfaceContainerLowest} selected={timeFilter == '1h' && true} />
+          <ButtonGeneric title="1 Day" executeFunction={() => setTimeFilter('1d')} color={theme.surfaceContainerLowest} selected={timeFilter == '1d' && true} />
+          <ButtonGeneric title="1 Month" executeFunction={() => setTimeFilter('1m')} color={theme.surfaceContainerLowest} selected={timeFilter == '1m' && true} />
         </View>
         <View style={styles.buttonContainer}>
-          <ButtonGeneric title="Line" executeFunction={() => setChartType('line')} color={theme.surfaceContainerLowest} />
-          <ButtonGeneric title="Area" executeFunction={() => setChartType('area')} color={theme.surfaceContainerLowest} />
-          <ButtonGeneric title="Bar" executeFunction={() => setChartType('bar')} color={theme.surfaceContainerLowest} />
+          <ButtonGeneric title="Line" executeFunction={() => setChartType('line')} color={theme.surfaceContainerLowest} selected={chartType == 'line' && true} />
+          <ButtonGeneric title="Area" executeFunction={() => setChartType('area')} color={theme.surfaceContainerLowest} selected={chartType == 'area' && true} />
+          <ButtonGeneric title="Bar" executeFunction={() => setChartType('bar')} color={theme.surfaceContainerLowest} selected={chartType == 'bar' && true} />
         </View>
         <ChartComponent
           type={chartType}

@@ -9,11 +9,11 @@ function App(): React.JSX.Element {
   return (
     <NavigationContainer>
       <ThemeProviderStyle>
-          <CurrencyProvider>
-            <ModalProvider>
-              <BottomTabs />
-            </ModalProvider>
-          </CurrencyProvider>
+        <CurrencyProvider>
+          <ModalProvider>
+            <BottomTabs />
+          </ModalProvider>
+        </CurrencyProvider>
       </ThemeProviderStyle>
     </NavigationContainer>
   );
