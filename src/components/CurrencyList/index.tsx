@@ -17,7 +17,11 @@ const CurrencyList: React.FC<CurrencyListProps> = ({ data }) => {
     const textColor = item.variation >= 0 ? 'green' : 'red';
 
     return (
-      <TouchableOpacity onPress={() => setSelectedCurrency(item.name)} style={[styles.card, isSelected && styles.selectedCard]}>
+      <TouchableOpacity 
+        onPress={() => setSelectedCurrency(item.name)} 
+        style={[styles.card, isSelected && styles.selectedCard]}
+        activeOpacity={0.8}
+      >
         <Text style={styles.name}>{item.name}</Text>
         <Text style={[styles.variation, { color: textColor }]}>{item.variation.toFixed(2)}%</Text>
         <Text style={styles.price}>{item.price.toFixed(2)}</Text>
@@ -32,6 +36,7 @@ const CurrencyList: React.FC<CurrencyListProps> = ({ data }) => {
       renderItem={renderItem}
       keyExtractor={(item) => item.name}
       style={styles.list}
+      showsHorizontalScrollIndicator={false}
     />
   );
 };

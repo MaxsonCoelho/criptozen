@@ -307,7 +307,6 @@ export const Home: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Header />
-      
       <ScrollView>
         <Text style={styles.header}>CryptoZen</Text>
         <View style={styles.buttonContainer}>

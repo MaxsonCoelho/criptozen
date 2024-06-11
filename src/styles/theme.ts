@@ -47,7 +47,7 @@ export const defaultTheme = {
         surfaceContainerHigh: '#E8E9E2',
         surfaceContainer: '#EEEEE8',
         surfaceContainerLow: '#F3F4EE',
-        surfaceContainerLowest: '#FFFFFF',
+        surfaceContainerLowest: '#0C0F0C',
         surfaceBright: '#F9FAF3',
         surfaceDim: '#DADAD4',
         titleButton: '#FFFFFF',

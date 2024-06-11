@@ -38,7 +38,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
 
   const font = useFont(require("../../../assets/fonts/Roboto-Regular.ttf"), 12);
   const chartFont = useFont(require("../../../assets/fonts/Roboto-Bold.ttf"), 30);
-  console.log('data', data);
+
   const filterDataByTime = useCallback((timeFilter: string) => {
     const endTime = new Date().getTime();
     let startTime: number;
