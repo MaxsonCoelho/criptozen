@@ -16,23 +16,26 @@ export const stylesCollections = () => {
       paddingHorizontal: 16,
     },
     dataContainer: {
-      marginVertical: 16,
+      marginTop: 5,
       fontWeight: 'bold',
-      paddingHorizontal: 16,
+      paddingHorizontal: 10,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
     },
     dataText: {
-      fontSize: 14,
+      fontSize: 12,
       color: '#FFFFFF',
-      marginBottom: 4,
       fontWeight: 'bold',
     },
     highestPrice: {
       color: '#00FF00',
+      fontSize: 12,
       fontWeight: 'bold',
     },
     lowestPrice: {
       color: '#FF3B3B',
       fontWeight: 'bold',
+      fontSize: 12,
     },
     graphics: {
       height: 350,

@@ -19,7 +19,7 @@ export interface LineBarChartData {
 interface ChartComponentProps {
   type: ChartType;
   data: LineBarChartData;
-  title: string;
+  title?: string;
   labels: string[];
   width: number;
   height?: number;
@@ -122,7 +122,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
 
   const formatCurrency = useCallback((value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(value), [currency]);
 
-  const latestFormattedDate = useMemo(() => new Date().toLocaleString('pt-BR'), []);
+  const latestFormattedDate = useMemo(() => new Date().toLocaleDateString('pt-BR'), []);
   const latestData = chartData[chartData.length - 1];
   const latestFormattedPrice = useMemo(() => latestData ? formatCurrency(latestData.y) : '', [latestData, formatCurrency]);
   const value = useMemo(() => `$${state.y.y.value.value.toFixed(2)}`, [state.y.y.value.value]);
@@ -135,21 +135,24 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
   
   return (
     <View style={[styles.chartContainer, { width, height }]}>
-      <Text style={styles.title}>{title}</Text>
       <View style={{ height, width }}>
         <View style={styles.dataContainer}>
           {latestData && (
             <Text style={styles.dataText}>
-              Preço em tempo real: {latestFormattedPrice}{'\n'}
-              Dia/Hora: {latestFormattedDate}
+              Dia: {latestFormattedDate}{'\n'}
+              Hora: {highestPriceTime}{'\n'}
             </Text>
           )}
           {highestPrice !== null && highestPriceTime && (
-            <Text style={[styles.dataText, styles.highestPrice]}>
-              Alta: {formatCurrency(highestPrice)} {'\n'}
-              Hora: {highestPriceTime}{'\n'}
-              Baixa: {formatCurrency(lowestPrice!)}
-            </Text>
+            <View style={{flexDirection: 'column'}}>
+              <Text style={[styles.dataText, styles.highestPrice]}>
+                Alta: {formatCurrency(highestPrice)}
+              </Text>
+              <Text style={[styles.dataText, styles.lowestPrice]}>
+                Baixa: {formatCurrency(lowestPrice!)}
+              </Text>
+            </View>
+            
           )}
         </View>
         <View style={styles.graphics}>

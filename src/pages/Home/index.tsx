@@ -6,7 +6,6 @@ import Config from 'react-native-config';
 import { stylesCollections } from './styles';
 import Header from '../../components/Header';
 import CurrencyList from '../../components/CurrencyList';
-import { Button } from 'react-native-elements';
 import { useCurrency } from '../../contexts/currency';
 import ButtonGeneric from '../../components/GenericButton';
 import { useThemeStyle } from '../../contexts/theme';
@@ -329,7 +328,6 @@ export const Home: React.FC = () => {
         <ChartComponent
           type={chartType}
           data={getCurrentData()}
-          title={`${selectedCurrency} - Preços em Tempo Real`}
           labels={getCurrentData().labels}
           width={Dimensions.get('window').width}
           currency={selectedCurrency.slice(0, 3)}
