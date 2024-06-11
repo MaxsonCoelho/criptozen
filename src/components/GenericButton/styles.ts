@@ -9,13 +9,13 @@ export const stylesCollections = () => {
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: 'red',
-      paddingHorizontal: 25,
+      paddingHorizontal: 10,
       borderRadius: 8,
       paddingVertical: 10,
       
     },
     Title: {
-      fontSize: RFValue(22),
+      fontSize: RFValue(12),
       fontWeight: '600',
       fontFamily: 'Roboto-Regular',
       fontStyle: 'normal',

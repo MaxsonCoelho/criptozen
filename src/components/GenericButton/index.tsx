@@ -38,7 +38,7 @@ export default function ButtonGeneric({
       style={[
         styles.Container,
         {
-          width: width ? width! : '50%',
+          width: width ? width! : '20%',
           backgroundColor: color,
           flexDirection: iconLeft && 'row'!!,
           alignItems: iconLeft && 'center'!!

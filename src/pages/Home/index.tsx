@@ -8,6 +8,8 @@ import Header from '../../components/Header';
 import CurrencyList from '../../components/CurrencyList';
 import { Button } from 'react-native-elements';
 import { useCurrency } from '../../contexts/currency';
+import ButtonGeneric from '../../components/GenericButton';
+import { useThemeStyle } from '../../contexts/theme';
 
 const { PRICE_WS_URL, TRADES_WS_URL } = Config;
 
@@ -37,6 +39,7 @@ export const Home: React.FC = () => {
   const [timeFilter, setTimeFilter] = useState('5m');
   const [chartType, setChartType] = useState<'line' | 'area' | 'bar'>('area');
   const styles = stylesCollections();
+  const { theme } = useThemeStyle();
 
   useEffect(() => {
     const symbols = [
@@ -313,15 +316,15 @@ export const Home: React.FC = () => {
           <CurrencyList data={cryptoData} />
         </View>
         <View style={styles.buttonContainer}>
-          <Button title="5 Min" onPress={() => setTimeFilter('5m')} />
-          <Button title="1 Hour" onPress={() => setTimeFilter('1h')} />
-          <Button title="1 Day" onPress={() => setTimeFilter('1d')} />
-          <Button title="1 Month" onPress={() => setTimeFilter('1m')} />
+          <ButtonGeneric title="5 Min" executeFunction={() => setTimeFilter('5m')} color={theme.surfaceContainerLowest}  />
+          <ButtonGeneric title="1 Hour" executeFunction={() => setTimeFilter('1h')} color={theme.surfaceContainerLowest} />
+          <ButtonGeneric title="1 Day" executeFunction={() => setTimeFilter('1d')} color={theme.surfaceContainerLowest} />
+          <ButtonGeneric title="1 Month" executeFunction={() => setTimeFilter('1m')} color={theme.surfaceContainerLowest} />
         </View>
         <View style={styles.buttonContainer}>
-          <Button title="Line" onPress={() => setChartType('line')} />
-          <Button title="Area" onPress={() => setChartType('area')} />
-          <Button title="Bar" onPress={() => setChartType('bar')} />
+          <ButtonGeneric title="Line" executeFunction={() => setChartType('line')} color={theme.surfaceContainerLowest} />
+          <ButtonGeneric title="Area" executeFunction={() => setChartType('area')} color={theme.surfaceContainerLowest} />
+          <ButtonGeneric title="Bar" executeFunction={() => setChartType('bar')} color={theme.surfaceContainerLowest} />
         </View>
         <ChartComponent
           type={chartType}

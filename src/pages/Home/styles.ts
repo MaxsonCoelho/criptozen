@@ -18,7 +18,7 @@ export const stylesCollections = () => {
     buttonContainer: {
       flexDirection: 'row',
       justifyContent: 'space-around',
-      marginVertical: 10,
+      marginVertical: 5,
     },
   });
 };
