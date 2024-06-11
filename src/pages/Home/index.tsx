@@ -19,30 +19,36 @@ const filterSignificantData = (data: CryptoData[], symbols: string[]) => {
 
 export const Home: React.FC = () => {
   const { selectedCurrency } = useCurrency();
-  const [btcData, setBtcData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }], volumes: [], variations: [] });
-  const [ethData, setEthData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }], volumes: [], variations: [] });
-  const [xrpData, setXrpData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }], volumes: [], variations: [] });
-  const [ltcData, setLtcData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }], volumes: [], variations: [] });
-  const [bchData, setBchData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }], volumes: [], variations: [] });
-  const [eosData, setEosData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }], volumes: [], variations: [] });
-  const [adaData, setAdaData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }], volumes: [], variations: [] });
-  const [xlmData, setXlmData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }], volumes: [], variations: [] });
-  const [trxData, setTrxData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }], volumes: [], variations: [] });
-  const [iotData, setIotData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }], volumes: [], variations: [] });
-  const [dasData, setDasData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }], volumes: [], variations: [] });
-  const [neoData, setNeoData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }], volumes: [], variations: [] });
-  const [xmrData, setXmrData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }], volumes: [], variations: [] });
-  const [zecData, setZecData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }], volumes: [], variations: [] });
-  const [dogData, setDogData] = useState<LineBarChartData>({ labels: [], datasets: [{ data: [] }], volumes: [], variations: [] });
   const [cryptoData, setCryptoData] = useState<CryptoData[]>([]);
   const [timeFilter, setTimeFilter] = useState('5m');
   const [chartType, setChartType] = useState<'line' | 'area' | 'bar'>('area');
+  const [chartData, setChartData] = useState<{ [key: string]: LineBarChartData }>({});
   const styles = stylesCollections();
   const { theme } = useThemeStyle();
 
+  const updateChartData = (symbol: string, significantData: CryptoData[]) => {
+    setChartData(prevData => {
+      const newData = significantData.filter(item => item.name === symbol).map(item => ({
+        x: item.timestamp,
+        y: item.price as number,
+        volume: item.volume as number,
+        variation: item.variation as number,
+      }));
+      return {
+        ...prevData,
+        [symbol]: {
+          labels: [...(prevData[symbol]?.labels || []), ...newData.map(item => item.x)],
+          datasets: [{ data: [...(prevData[symbol]?.datasets[0].data || []), ...newData.map(item => item.y)] }],
+          volumes: [...(prevData[symbol]?.volumes || []), ...newData.map(item => item.volume)],
+          variations: [...(prevData[symbol]?.variations || []), ...newData.map(item => item.variation)],
+        },
+      };
+    });
+  };
+
   useEffect(() => {
     const symbols = [
-      'BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'LTCUSDT', 'BCHUSDT', 'EOSUSDT', 'ADAUSDT', 
+      'BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'LTCUSDT', 'BCHUSDT', 'EOSUSDT', 'ADAUSDT',
       'XLMUSDT', 'TRXUSDT', 'IOTAUSDT', 'DASHUSDT', 'NEOUSDT', 'XMRUSDT', 'ZECUSDT', 'DOGEUSDT'
     ];
 
@@ -51,101 +57,9 @@ export const Home: React.FC = () => {
       const significantData = filterSignificantData(formattedData, symbols);
       setCryptoData(significantData);
 
-      if (significantData.length > 0) {
-        setBtcData(prevData => ({
-          labels: [...prevData.labels, ...significantData.filter(item => item.name === 'BTCUSDT').map(item => item.timestamp)],
-          datasets: [{ data: [...prevData.datasets[0].data, ...significantData.filter(item => item.name === 'BTCUSDT').map(item => item.price as number)] }],
-          volumes: [...prevData.volumes, ...significantData.filter(item => item.name === 'BTCUSDT').map(item => item.volume as number)],
-          variations: [...prevData.variations, ...significantData.filter(item => item.name === 'BTCUSDT').map(item => item.variation as number)]
-        }));
-
-        setEthData(prevData => ({
-          labels: [...prevData.labels, ...significantData.filter(item => item.name === 'ETHUSDT').map(item => item.timestamp)],
-          datasets: [{ data: [...prevData.datasets[0].data, ...significantData.filter(item => item.name === 'ETHUSDT').map(item => item.price as number)] }],
-          volumes: [...prevData.volumes, ...significantData.filter(item => item.name === 'ETHUSDT').map(item => item.volume as number)],
-          variations: [...prevData.variations, ...significantData.filter(item => item.name === 'ETHUSDT').map(item => item.variation as number)]
-        }));
-
-        setXrpData(prevData => ({
-          labels: [...prevData.labels, ...significantData.filter(item => item.name === 'XRPUSDT').map(item => item.timestamp)],
-          datasets: [{ data: [...prevData.datasets[0].data, ...significantData.filter(item => item.name === 'XRPUSDT').map(item => item.price as number)] }],
-          volumes: [...prevData.volumes, ...significantData.filter(item => item.name === 'XRPUSDT').map(item => item.volume as number)],
-          variations: [...prevData.variations, ...significantData.filter(item => item.name === 'XRPUSDT').map(item => item.variation as number)]
-        }));
-        setLtcData(prevData => ({
-          labels: [...prevData.labels, ...significantData.filter(item => item.name === 'LTCUSDT').map(item => item.timestamp)],
-          datasets: [{ data: [...prevData.datasets[0].data, ...significantData.filter(item => item.name === 'LTCUSDT').map(item => item.price as number)] }],
-          volumes: [...prevData.volumes, ...significantData.filter(item => item.name === 'LTCUSDT').map(item => item.volume as number)],
-          variations: [...prevData.variations, ...significantData.filter(item => item.name === 'LTCUSDT').map(item => item.variation as number)]
-        }));
-
-        setBchData(prevData => ({
-          labels: [...prevData.labels, ...significantData.filter(item => item.name === 'BCHUSDT').map(item => item.timestamp)],
-          datasets: [{ data: [...prevData.datasets[0].data, ...significantData.filter(item => item.name === 'BCHUSDT').map(item => item.price as number)] }],
-          volumes: [...prevData.volumes, ...significantData.filter(item => item.name === 'BCHUSDT').map(item => item.volume as number)],
-          variations: [...prevData.variations, ...significantData.filter(item => item.name === 'BCHUSDT').map(item => item.variation as number)]
-        }));
-
-        setEosData(prevData => ({
-          labels: [...prevData.labels, ...significantData.filter(item => item.name === 'EOSUSDT').map(item => item.timestamp)],
-          datasets: [{ data: [...prevData.datasets[0].data, ...significantData.filter(item => item.name === 'EOSUSDT').map(item => item.price as number)] }],
-          volumes: [...prevData.volumes, ...significantData.filter(item => item.name === 'EOSUSDT').map(item => item.volume as number)],
-          variations: [...prevData.variations, ...significantData.filter(item => item.name === 'EOSUSDT').map(item => item.variation as number)]
-        }));
-        setAdaData(prevData => ({
-          labels: [...prevData.labels, ...significantData.filter(item => item.name === 'ADAUSDT').map(item => item.timestamp)],
-          datasets: [{ data: [...prevData.datasets[0].data, ...significantData.filter(item => item.name === 'ADAUSDT').map(item => item.price as number)] }],
-          volumes: [...prevData.volumes, ...significantData.filter(item => item.name === 'ADAUSDT').map(item => item.volume as number)],
-          variations: [...prevData.variations, ...significantData.filter(item => item.name === 'ADAUSDT').map(item => item.variation as number)]
-        }));
-
-        setTrxData(prevData => ({
-          labels: [...prevData.labels, ...significantData.filter(item => item.name === 'TRXUSDT').map(item => item.timestamp)],
-          datasets: [{ data: [...prevData.datasets[0].data, ...significantData.filter(item => item.name === 'TRXUSDT').map(item => item.price as number)] }],
-          volumes: [...prevData.volumes, ...significantData.filter(item => item.name === 'TRXUSDT').map(item => item.volume as number)],
-          variations: [...prevData.variations, ...significantData.filter(item => item.name === 'TRXUSDT').map(item => item.variation as number)]
-        }));
-
-        setIotData(prevData => ({
-          labels: [...prevData.labels, ...significantData.filter(item => item.name === 'IOTAUSDT').map(item => item.timestamp)],
-          datasets: [{ data: [...prevData.datasets[0].data, ...significantData.filter(item => item.name === 'IOTAUSDT').map(item => item.price as number)] }],
-          volumes: [...prevData.volumes, ...significantData.filter(item => item.name === 'IOTAUSDT').map(item => item.volume as number)],
-          variations: [...prevData.variations, ...significantData.filter(item => item.name === 'IOTAUSDT').map(item => item.variation as number)]
-        }));
-        setDasData(prevData => ({
-          labels: [...prevData.labels, ...significantData.filter(item => item.name === 'DASUSDT').map(item => item.timestamp)],
-          datasets: [{ data: [...prevData.datasets[0].data, ...significantData.filter(item => item.name === 'DASUSDT').map(item => item.price as number)] }],
-          volumes: [...prevData.volumes, ...significantData.filter(item => item.name === 'DASUSDT').map(item => item.volume as number)],
-          variations: [...prevData.variations, ...significantData.filter(item => item.name === 'DASUSDT').map(item => item.variation as number)]
-        }));
-
-        setNeoData(prevData => ({
-          labels: [...prevData.labels, ...significantData.filter(item => item.name === 'NEOUSDT').map(item => item.timestamp)],
-          datasets: [{ data: [...prevData.datasets[0].data, ...significantData.filter(item => item.name === 'NEOUSDT').map(item => item.price as number)] }],
-          volumes: [...prevData.volumes, ...significantData.filter(item => item.name === 'NEOUSDT').map(item => item.volume as number)],
-          variations: [...prevData.variations, ...significantData.filter(item => item.name === 'NEOUSDT').map(item => item.variation as number)]
-        }));
-
-        setXmrData(prevData => ({
-          labels: [...prevData.labels, ...significantData.filter(item => item.name === 'XMRUSDT').map(item => item.timestamp)],
-          datasets: [{ data: [...prevData.datasets[0].data, ...significantData.filter(item => item.name === 'XMRUSDT').map(item => item.price as number)] }],
-          volumes: [...prevData.volumes, ...significantData.filter(item => item.name === 'XMRUSDT').map(item => item.volume as number)],
-          variations: [...prevData.variations, ...significantData.filter(item => item.name === 'XMRUSDT').map(item => item.variation as number)]
-        }));
-        setZecData(prevData => ({
-          labels: [...prevData.labels, ...significantData.filter(item => item.name === 'ZECUSDT').map(item => item.timestamp)],
-          datasets: [{ data: [...prevData.datasets[0].data, ...significantData.filter(item => item.name === 'ZECUSDT').map(item => item.price as number)] }],
-          volumes: [...prevData.volumes, ...significantData.filter(item => item.name === 'ZECUSDT').map(item => item.volume as number)],
-          variations: [...prevData.variations, ...significantData.filter(item => item.name === 'ZECUSDT').map(item => item.variation as number)]
-        }));
-
-        setDogData(prevData => ({
-          labels: [...prevData.labels, ...significantData.filter(item => item.name === 'DOGEUSDT').map(item => item.timestamp)],
-          datasets: [{ data: [...prevData.datasets[0].data, ...significantData.filter(item => item.name === 'DOGEUSDT').map(item => item.price as number)] }],
-          volumes: [...prevData.volumes, ...significantData.filter(item => item.name === 'DOGEUSDT').map(item => item.volume as number)],
-          variations: [...prevData.variations, ...significantData.filter(item => item.name === 'DOGEUSDT').map(item => item.variation as number)]
-        }));
-      }
+      symbols.forEach(symbol => {
+        updateChartData(symbol, significantData);
+      });
     });
 
     const tradeWs = connectWebSocket(TRADES_WS_URL!, (data) => {
@@ -154,112 +68,7 @@ export const Home: React.FC = () => {
 
       if (significantData.length > 0) {
         const item = significantData[0];
-        if (item.name === 'BTCUSDT') {
-          setBtcData(prevData => ({
-            labels: [...prevData.labels, item.timestamp],
-            datasets: [{ data: [...prevData.datasets[0].data, item.price as number] }],
-            volumes: [...prevData.volumes, item.volume as number],
-            variations: [...prevData.variations, item.variation as number]
-          }));
-        } else if (item.name === 'ETHUSDT') {
-          setEthData(prevData => ({
-            labels: [...prevData.labels, item.timestamp],
-            datasets: [{ data: [...prevData.datasets[0].data, item.price as number] }],
-            volumes: [...prevData.volumes, item.volume as number],
-            variations: [...prevData.variations, item.variation as number]
-          }));
-        } else if (item.name === 'XRPUSDT') {
-          setXrpData(prevData => ({
-            labels: [...prevData.labels, item.timestamp],
-            datasets: [{ data: [...prevData.datasets[0].data, item.price as number] }],
-            volumes: [...prevData.volumes, item.volume as number],
-            variations: [...prevData.variations, item.variation as number]
-          }));
-        } else if (item.name === 'LTCUSDT') {
-          setLtcData(prevData => ({
-            labels: [...prevData.labels, item.timestamp],
-            datasets: [{ data: [...prevData.datasets[0].data, item.price as number] }],
-            volumes: [...prevData.volumes, item.volume as number],
-            variations: [...prevData.variations, item.variation as number]
-          }));
-        } else if (item.name === 'BCHUSDT') {
-          setBchData(prevData => ({
-            labels: [...prevData.labels, item.timestamp],
-            datasets: [{ data: [...prevData.datasets[0].data, item.price as number] }],
-            volumes: [...prevData.volumes, item.volume as number],
-            variations: [...prevData.variations, item.variation as number]
-          }));
-        } else if (item.name === 'EOSUSDT') {
-          setEosData(prevData => ({
-            labels: [...prevData.labels, item.timestamp],
-            datasets: [{ data: [...prevData.datasets[0].data, item.price as number] }],
-            volumes: [...prevData.volumes, item.volume as number],
-            variations: [...prevData.variations, item.variation as number]
-          }));
-        } else if (item.name === 'ADAUSDT') {
-          setAdaData(prevData => ({
-            labels: [...prevData.labels, item.timestamp],
-            datasets: [{ data: [...prevData.datasets[0].data, item.price as number] }],
-            volumes: [...prevData.volumes, item.volume as number],
-            variations: [...prevData.variations, item.variation as number]
-          }));
-        } else if (item.name === 'XLMUSDT') {
-          setXlmData(prevData => ({
-            labels: [...prevData.labels, item.timestamp],
-            datasets: [{ data: [...prevData.datasets[0].data, item.price as number] }],
-            volumes: [...prevData.volumes, item.volume as number],
-            variations: [...prevData.variations, item.variation as number]
-          }));
-        } else if (item.name === 'TRXUSDT') {
-          setTrxData(prevData => ({
-            labels: [...prevData.labels, item.timestamp],
-            datasets: [{ data: [...prevData.datasets[0].data, item.price as number] }],
-            volumes: [...prevData.volumes, item.volume as number],
-            variations: [...prevData.variations, item.variation as number]
-          }));
-        } else if (item.name === 'IOTAUSDT') {
-          setIotData(prevData => ({
-            labels: [...prevData.labels, item.timestamp],
-            datasets: [{ data: [...prevData.datasets[0].data, item.price as number] }],
-            volumes: [...prevData.volumes, item.volume as number],
-            variations: [...prevData.variations, item.variation as number]
-          }));
-        } else if (item.name === 'DASHUSDT') {
-          setDasData(prevData => ({
-            labels: [...prevData.labels, item.timestamp],
-            datasets: [{ data: [...prevData.datasets[0].data, item.price as number] }],
-            volumes: [...prevData.volumes, item.volume as number],
-            variations: [...prevData.variations, item.variation as number]
-          }));
-        } else if (item.name === 'NEOUSDT') {
-          setNeoData(prevData => ({
-            labels: [...prevData.labels, item.timestamp],
-            datasets: [{ data: [...prevData.datasets[0].data, item.price as number] }],
-            volumes: [...prevData.volumes, item.volume as number],
-            variations: [...prevData.variations, item.variation as number]
-          }));
-        } else if (item.name === 'XMRUSDT') {
-          setXmrData(prevData => ({
-            labels: [...prevData.labels, item.timestamp],
-            datasets: [{ data: [...prevData.datasets[0].data, item.price as number] }],
-            volumes: [...prevData.volumes, item.volume as number],
-            variations: [...prevData.variations, item.variation as number]
-          }));
-        } else if (item.name === 'ZECUSDT') {
-          setZecData(prevData => ({
-            labels: [...prevData.labels, item.timestamp],
-            datasets: [{ data: [...prevData.datasets[0].data, item.price as number] }],
-            volumes: [...prevData.volumes, item.volume as number],
-            variations: [...prevData.variations, item.variation as number]
-          }));
-        } else if (item.name === 'DOGEUSDT') {
-          setDogData(prevData => ({
-            labels: [...prevData.labels, item.timestamp],
-            datasets: [{ data: [...prevData.datasets[0].data, item.price as number] }],
-            volumes: [...prevData.volumes, item.volume as number],
-            variations: [...prevData.variations, item.variation as number]
-          }));
-        }
+        updateChartData(item.name, [item]);
       }
     });
 
@@ -269,42 +78,7 @@ export const Home: React.FC = () => {
     };
   }, []);
 
-  const getCurrentData = () => {
-    switch (selectedCurrency) {
-      case 'BTCUSDT':
-        return btcData;
-      case 'ETHUSDT':
-        return ethData;
-      case 'XRPUSDT':
-        return xrpData;
-      case 'LTCUSDT':
-        return ltcData;
-      case 'BCHUSDT':
-        return bchData;
-      case 'EOSUSDT':
-      return eosData;
-      case 'ADAUSDT':
-        return adaData;
-      case 'XLMUSDT':
-        return xlmData;
-      case 'TRXUSDT':
-        return trxData;
-      case 'IOTAUSDT':
-        return iotData;
-      case 'DASHUSDT':
-        return ethData;
-      case 'NEOUSDT':
-        return neoData;
-      case 'XMRUSDT':
-        return xmrData;
-      case 'ZECUSDT':
-        return zecData;
-      case 'DOGEUSDT':
-        return dogData;
-      default:
-        return btcData;
-    }
-  };
+  const getCurrentData = () => chartData[selectedCurrency] || { labels: [], datasets: [{ data: [] }], volumes: [], variations: [] };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -315,15 +89,15 @@ export const Home: React.FC = () => {
           <CurrencyList data={cryptoData} />
         </View>
         <View style={styles.buttonContainer}>
-          <ButtonGeneric title="5 Min" executeFunction={() => setTimeFilter('5m')} color={theme.surfaceContainerLowest} selected={timeFilter == '5m' && true} />
-          <ButtonGeneric title="1 Hour" executeFunction={() => setTimeFilter('1h')} color={theme.surfaceContainerLowest} selected={timeFilter == '1h' && true} />
-          <ButtonGeneric title="1 Day" executeFunction={() => setTimeFilter('1d')} color={theme.surfaceContainerLowest} selected={timeFilter == '1d' && true} />
-          <ButtonGeneric title="1 Month" executeFunction={() => setTimeFilter('1m')} color={theme.surfaceContainerLowest} selected={timeFilter == '1m' && true} />
+          <ButtonGeneric title="5 Min" executeFunction={() => setTimeFilter('5m')} color={theme.surfaceContainerLowest} selected={timeFilter === '5m'} />
+          <ButtonGeneric title="1 Hour" executeFunction={() => setTimeFilter('1h')} color={theme.surfaceContainerLowest} selected={timeFilter === '1h'} />
+          <ButtonGeneric title="1 Day" executeFunction={() => setTimeFilter('1d')} color={theme.surfaceContainerLowest} selected={timeFilter === '1d'} />
+          <ButtonGeneric title="1 Month" executeFunction={() => setTimeFilter('1m')} color={theme.surfaceContainerLowest} selected={timeFilter === '1m'} />
         </View>
         <View style={styles.buttonContainer}>
-          <ButtonGeneric title="Line" executeFunction={() => setChartType('line')} color={theme.surfaceContainerLowest} selected={chartType == 'line' && true} />
-          <ButtonGeneric title="Area" executeFunction={() => setChartType('area')} color={theme.surfaceContainerLowest} selected={chartType == 'area' && true} />
-          <ButtonGeneric title="Bar" executeFunction={() => setChartType('bar')} color={theme.surfaceContainerLowest} selected={chartType == 'bar' && true} />
+          <ButtonGeneric title="Line" executeFunction={() => setChartType('line')} color={theme.surfaceContainerLowest} selected={chartType === 'line'} />
+          <ButtonGeneric title="Area" executeFunction={() => setChartType('area')} color={theme.surfaceContainerLowest} selected={chartType === 'area'} />
+          <ButtonGeneric title="Bar" executeFunction={() => setChartType('bar')} color={theme.surfaceContainerLowest} selected={chartType === 'bar'} />
         </View>
         <ChartComponent
           type={chartType}

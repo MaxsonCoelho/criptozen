@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { View, Text } from 'react-native';
 import { CartesianChart, Line, Area, Bar, useChartPressState } from "victory-native";
 import { Circle, LinearGradient, useFont, vec, Text as SKText } from "@shopify/react-native-skia";
@@ -103,9 +103,9 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
       const maxPriceTime = chartData.find(d => d.y === maxPrice)?.x || '';
       const minPriceTime = chartData.find(d => d.y === minPrice)?.x || '';
 
-      setHighestPrice(prev => (prev !== maxPrice ? maxPrice : prev));
-      setHighestPriceTime(prev => (prev !== maxPriceTime ? maxPriceTime : prev));
-      setLowestPrice(prev => (prev !== minPrice ? minPrice : prev));
+      setHighestPrice(maxPrice);
+      setHighestPriceTime(maxPriceTime);
+      setLowestPrice(minPrice);
     }
   }, [chartData]);
 
@@ -152,7 +152,6 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
                 Baixa: {formatCurrency(lowestPrice!)}
               </Text>
             </View>
-            
           )}
         </View>
         <View style={styles.graphics}>
