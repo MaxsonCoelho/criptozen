@@ -86,7 +86,7 @@ export const Home: React.FC = () => {
       <Header />
       <ScrollView>
         <Text style={styles.header}>CryptoZen</Text>
-        <View style={[styles.buttonContainer, {alignItems: 'center', justifyContent: 'center'}]}>
+        <View style={[styles.buttonContainer, {height: cryptoData.length === 0 ? 100 : 'auto', alignItems: 'center', justifyContent: 'center'}]}>
           {cryptoData.length === 0 && <GenericLoading />}
           {cryptoData.length > 0 && <CurrencyList data={cryptoData} />}
         </View>
