@@ -23,7 +23,17 @@ export const stylesCollections = () => {
     chartContainer: {
       alignItems: 'center', 
       justifyContent: 'center'
-    }
+    },
+    slowConnectionWarning: {
+      padding: 10,
+      backgroundColor: 'red',
+      margin: 10,
+      borderRadius: 5,
+    },
+    slowConnectionText: {
+      color: 'white',
+      textAlign: 'center',
+    },
   });
 };
   

@@ -8,7 +8,7 @@ export const stylesCollections = () => {
     Container: {
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'red',
+      backgroundColor: 'transparent',
       paddingHorizontal: 10,
       borderRadius: 8,
       paddingVertical: 5,
@@ -24,7 +24,7 @@ export const stylesCollections = () => {
       fontStyle: 'normal',
       alignItems: 'center',
       textAlign: 'center',
-      color: theme.onPrimary,
+      color: theme.surfaceBright,
     },
   });
 };

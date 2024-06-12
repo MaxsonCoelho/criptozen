@@ -23,7 +23,7 @@ export const stylesCollections = () => {
         },
         name: {
             fontWeight: 'bold',
-            color: theme.onTertiary
+            color: theme.surfaceBright
         },
         variation: {
             fontSize: 12,
@@ -31,7 +31,7 @@ export const stylesCollections = () => {
         price: {
             fontSize: 16,
             fontWeight: 'bold',
-            color: theme.onTertiary
+            color: theme.surfaceBright
         },
     });
 };

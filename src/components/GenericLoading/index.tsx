@@ -10,7 +10,7 @@ const GenericLoading = () => {
 
   return (
     <Animated.View style={styles.container}>
-      <ActivityIndicator size="large" color={theme.primary} />
+      <ActivityIndicator size="large" color={theme.inverseSurface} />
     </Animated.View>
   );
 };

@@ -48,7 +48,7 @@ export default function Header({
     <View
       style={[
         styles.container,
-        { width: screenWidth, borderBottomColor: theme.primaryFixedDim },
+        { width: screenWidth, borderBottomColor: theme.surfaceBright },
       ]}
     >
       <TouchableOpacity
@@ -81,7 +81,7 @@ export default function Header({
           </Text>
         )
         :
-          <Image width={25} height={25} source={require('../../assets/images/bitcoins.png')} />
+          <Image width={25} height={25} source={require('../../assets/images/coin-icon-32.png')} />
         }
       </View>
       <TouchableOpacity onPress={handleButtonRight} activeOpacity={0.6}>
@@ -93,7 +93,7 @@ export default function Header({
           />
         )}
         {iconRight == 'active_check' && (
-          <Ionicons name="checkmark-circle" size={30} color={theme.primary} />
+          <Ionicons name="checkmark-circle" size={30} color={theme.surfaceBright} />
         )}
         {iconRight == 'inactive_check' && (
           <Ionicons
@@ -111,7 +111,7 @@ export default function Header({
                 </View>
               </View>
             )}
-            <Ionicons name="funnel-outline" size={20} color={theme.primary} />
+            <Ionicons name="funnel-outline" size={20} color={theme.surfaceBright} />
           </View>
         )}
         {iconRight == 'null' && null}
@@ -124,7 +124,7 @@ export default function Header({
           <Ionicons
             name="person-outline"
             size={25}
-            color={theme.primary}
+            color={theme.surfaceBright}
           />
         </TouchableOpacity>
       )}
