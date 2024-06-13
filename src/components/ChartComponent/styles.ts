@@ -22,6 +22,11 @@ export const stylesCollections = () => {
       flexDirection: 'row',
       justifyContent: 'space-between',
     },
+    coinValuesContainer: {
+      flexDirection: 'row', 
+      justifyContent: 'space-between',
+      width: '100%'
+    },
     dataText: {
       fontSize: 12,
       color: '#FFFFFF',

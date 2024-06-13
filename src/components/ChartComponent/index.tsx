@@ -137,14 +137,8 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
     <View style={[styles.chartContainer, { width, height }]}>
       <View style={{ height, width }}>
         <View style={styles.dataContainer}>
-          {latestData && (
-            <Text style={styles.dataText}>
-              Dia: {latestFormattedDate}{'\n'}
-              Hora: {highestPriceTime}{'\n'}
-            </Text>
-          )}
           {highestPrice !== null && highestPriceTime && (
-            <View style={{flexDirection: 'column'}}>
+            <View style={styles.coinValuesContainer}>
               <Text style={[styles.dataText, styles.highestPrice]}>
                 Alta: {formatCurrency(highestPrice)}
               </Text>
@@ -159,7 +153,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
             data={chartData}
             xKey="x"
             yKeys={["y"]}
-            domainPadding={{ top: 70, bottom: 50, right: 30 }}
+            domainPadding={{ top: 70, bottom: 70, right: 30 }}
             axisOptions={{
               font,
               labelColor,
@@ -174,6 +168,14 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
                   y={40}
                   font={chartFont}
                   text={showLatestPrice ? latestFormattedPrice : value}
+                  color={labelColor}
+                  style={"fill"}
+                />
+                <SKText
+                  x={chartBounds.left + 10}
+                  y={60}
+                  font={font}
+                  text={`Dia: ${latestFormattedDate}\nHora: ${highestPriceTime}`}
                   color={labelColor}
                   style={"fill"}
                 />
