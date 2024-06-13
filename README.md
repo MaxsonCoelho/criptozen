@@ -86,6 +86,7 @@ Este projeto é uma aplicação completa para monitoramento de criptomoedas, com
 
 OBS: Se faz necessária uma api websocket privada ao invés dessa gratuita, limitada e que tem muitos acessos globalmente. 
 Isso foi analisado para melhor obtenção de dados com o intuito de alcançar uma performance de excelência na exibição e no controle dos mesmos, garantindo maior performance e estabilidade do app.
+Também se faz necessária uma estrutura de banco offline usando por exemplo um banco relacional, sqlite para administrar e repassar os dados com maior velocidade, mas infelizmente o tempo desse teste é muito curto para criar tal funcionalidade, além disso a api gratuita precisaria não ser de uso público também. 
 
 Websocket gratuito ultilizado da binance
 PRICE_WS_URL=wss://stream.binance.com:9443/ws/!ticker@arr
