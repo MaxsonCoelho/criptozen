@@ -24,7 +24,7 @@ export const Home: React.FC = () => {
   const { isConnected, isConnectionSlow } = useConnection();
   const [cryptoData, setCryptoData] = useState<CryptoData[]>([]);
   const [timeFilter, setTimeFilter] = useState('5m');
-  const [chartType, setChartType] = useState<'line' | 'area' | 'bar'>('area');
+  const [chartType, setChartType] = useState<'line' | 'area' | 'bar'>('line');
   const [chartData, setChartData] = useState<{ [key: string]: LineBarChartData }>({});
   const styles = stylesCollections();
   const { theme } = useThemeStyle();
@@ -85,7 +85,7 @@ export const Home: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header iconRight='menu_points' />
+      <Header />
       <View style={[styles.buttonContainer, {marginTop: 10}]}>
         <ButtonGeneric title="Comprar" colorTitle={theme.scrim} color={theme.primaryContainer} width={150} />
         <ButtonGeneric title="Vender" colorTitle={theme.surfaceBright} color={theme.surfaceDim} width={150} />

@@ -66,7 +66,10 @@ export default function Header({
         {iconLeft == 'null' && null}
       </TouchableOpacity>
       <View
-        style={{position: 'absolute', left: 0, right: 0, alignItems: 'center'}}
+        style={[
+          styles.titleContainer,
+          accountPage && { alignItems: 'flex-start' },
+        ]}
       >
         {title ? (
           <Text
