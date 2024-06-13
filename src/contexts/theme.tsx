@@ -21,15 +21,16 @@ export const ThemeProviderStyle: React.FC<{ children: ReactNode }> = ({ children
 
   const [themeType, setThemeType] = useState<ThemeType>(initialTheme);
 
+  // Function to toggle the theme
   const toggleTheme = (type: ThemeType) => {
     setThemeType(type);
-    setIsConfigCel(type === 'config-cel'); // Atualiza isConfigCel com base no tipo selecionado
+    setIsConfigCel(type === 'config-cel'); // Update isConfigCel based on selected type
     saveTheme(type);
   };
 
   const theme = themeType === 'config-cel' ? defaultTheme[systemTheme || 'light'] : defaultTheme[themeType];
 
-  // Função para salvar o tema no armazenamento persistente
+  // Function to save the theme in persistent storage
   const saveTheme = async (theme: ThemeType | null | undefined) => {
     try {
       const key = 'theme';
@@ -43,7 +44,7 @@ export const ThemeProviderStyle: React.FC<{ children: ReactNode }> = ({ children
     }
   };
 
-  // Função para carregar o tema do armazenamento persistente
+  // Function to load the theme from persistent storage
   const loadTheme = async () => {
     try {
       const storedTheme = await AsyncStorage.getItem('theme');
@@ -51,7 +52,7 @@ export const ThemeProviderStyle: React.FC<{ children: ReactNode }> = ({ children
         setThemeType(storedTheme as ThemeType);
         setIsConfigCel(storedTheme === 'config-cel');
       } else {
-        // Se nenhum tema estiver armazenado, use 'config-cel' como padrão
+        // If no theme is stored, use 'config-cel' as default
         setThemeType('config-cel');
         setIsConfigCel(true);
         await saveTheme('config-cel');
@@ -62,16 +63,16 @@ export const ThemeProviderStyle: React.FC<{ children: ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    loadTheme(); // Carrega o tema do armazenamento persistente
+    loadTheme(); // Load theme from persistent storage
   }, []);
 
   useEffect(() => {
-    // Se o usuário escolheu seguir o tema do sistema ('config-cel'),
-    // então atualize o tema do app com base no tema do sistema atual.
+    // If the user chooses to follow the system theme ('config-cel'),
+    // then update the app theme based on the current system theme.
     if (isConfigCel) {
       const newThemeType = systemTheme === 'dark' ? 'dark' : 'light';
       setThemeType(newThemeType);
-      // Salve o novo temaType se desejar que essa preferência seja lembrada entre as sessões do app.
+      // Save the new themeType if you want this preference to be remembered between app sessions.
       saveTheme(newThemeType);
     }
   }, [systemTheme, isConfigCel]);
@@ -83,6 +84,7 @@ export const ThemeProviderStyle: React.FC<{ children: ReactNode }> = ({ children
   );
 };
 
+// Hook to use theme context
 export const useThemeStyle = () => {
   const context = useContext(ThemeContextStyle);
   if (!context) {

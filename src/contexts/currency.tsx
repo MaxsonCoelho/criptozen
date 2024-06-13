@@ -17,10 +17,11 @@ export const CurrencyProvider: React.FC<{ children: ReactNode }> = ({ children }
   );
 };
 
+// Hook to use currency context
 export const useCurrency = () => {
-    const context = useContext(CurrencyContext);
-    if (!context) {
-      throw new Error('useCurrency must be used within a CurrencyProvider');
-    }
-    return context;
+  const context = useContext(CurrencyContext);
+  if (!context) {
+    throw new Error('useCurrency must be used within a CurrencyProvider');
+  }
+  return context;
 };

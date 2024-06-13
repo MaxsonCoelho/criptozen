@@ -6,6 +6,7 @@ export interface CryptoData {
   timestamp: string;
 }
 
+// Connect to WebSocket server and handle messages
 export const connectWebSocket = (url: string, onMessage: (data: any) => void) => {
   const ws = new WebSocket(url);
 
@@ -33,6 +34,7 @@ export const connectWebSocket = (url: string, onMessage: (data: any) => void) =>
   return ws;
 };
 
+// Format price data received from WebSocket
 export const formatPriceData = (data: any): CryptoData[] => {
   try {
     return data.map((item: any) => ({
@@ -48,6 +50,7 @@ export const formatPriceData = (data: any): CryptoData[] => {
   }
 };
 
+// Format trade data received from WebSocket
 export const formatTradeData = (data: any): CryptoData => {
   try {
     return {

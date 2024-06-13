@@ -20,20 +20,24 @@ function InfoConnectionProvider({ children }: Props) {
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
   const [isConnectionSlow, setIsConnectionSlow] = useState<boolean>(false);
 
+  // Function to monitor the connection status
   async function monitoringConnection() {
     const connect = await NetInfo.fetch().then((state) => state.isConnected);
     return connect;
   }
 
+  // Function to update the connection status
   function updateIsConnected(value: boolean | null) {
     setIsConnected(value);
   }
 
+  // Function to check if connected to WiFi
   async function isConnectedToWifi(): Promise<boolean> {
     const state = await NetInfo.fetch();
     return !!state.isConnected && state.type === 'wifi';
   }
 
+  // Function to check the connection speed
   function checkConnectionSpeed() {
     NetInfo.fetch().then((state) => {
       if (state.isConnected) {
@@ -51,6 +55,7 @@ function InfoConnectionProvider({ children }: Props) {
       checkConnectionSpeed();
     });
 
+    // Check the connection status when the component mounts
     NetInfo.fetch().then((state) => {
       setIsConnected(state.isConnected);
       checkConnectionSpeed();
@@ -68,6 +73,7 @@ function InfoConnectionProvider({ children }: Props) {
   );
 }
 
+// Hook to use connection context
 const useConnection = () => {
   const context = useContext(ConnectionContext);
   if (!context) {
