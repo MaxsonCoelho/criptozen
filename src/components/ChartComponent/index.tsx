@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Alert } from 'react-native';
 import { CartesianChart, Line, Area, Bar, useChartPressState } from "victory-native";
 import { Circle, LinearGradient, useFont, vec, Text as SKText } from "@shopify/react-native-skia";
 import { stylesCollections } from './styles';
@@ -75,7 +75,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
           filteredVariations.push(data.variations[i]);
         }
       } else {
-        console.error(`Invalid date: ${label}`);
+        console.error(`Data inválida: ${label}`);
       }
     });
 
@@ -128,11 +128,11 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ type, data, title, labe
   const value = useMemo(() => `$${state.y.y.value.value.toFixed(2)}`, [state.y.y.value.value]);
   const labelColor = 'white';
   const lineColor = 'lightgrey';
-  
+
   if (!data || (data.datasets[0]?.data.length === 0)) {
-    return <Text style={styles.dataText}>No data available</Text>;
+    return <Text style={styles.dataText}>Nenhum dado disponível</Text>;
   }
-  
+
   return (
     <View style={[styles.chartContainer, { width, height }]}>
       <View style={{ height, width }}>
