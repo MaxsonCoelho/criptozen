@@ -85,7 +85,11 @@ export const Home: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
+      <Header iconRight='menu_points' />
+      <View style={[styles.buttonContainer, {marginTop: 10}]}>
+        <ButtonGeneric title="Comprar" colorTitle={theme.scrim} color={theme.primaryContainer} width={150} />
+        <ButtonGeneric title="Vender" colorTitle={theme.surfaceBright} color={theme.surfaceDim} width={150} />
+      </View>
       <ScrollView>
         {isConnected === false && (
           <View style={styles.slowConnectionWarning}>

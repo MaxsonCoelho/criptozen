@@ -15,7 +15,7 @@ export const defaultTheme = {
         scrim: '#000000',
         surfaceContainerLowest: '#0C0F0C',
         surfaceBright: '#F8F8F8',
-        surfaceDim: '#DADAD4',
+        surfaceDim: '#FF3F3F',
     },
     dark: {
         primaryContainer: '#72FF71',
@@ -33,7 +33,7 @@ export const defaultTheme = {
         scrim: '#000000',
         surfaceContainerLowest: '#0C0F0C',
         surfaceBright: '#F9FAF3',
-        surfaceDim: '#DADAD4',
+        surfaceDim: '#FF3F3F',
     }
 };
   
