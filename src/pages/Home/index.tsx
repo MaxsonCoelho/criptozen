@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Dimensions, SafeAreaView } from 'react-native';
 import ChartComponent, { LineBarChartData } from '../../components/ChartComponent';
-import { connectWebSocket, formatPriceData, formatTradeData, CryptoData } from '../../services/websocketService';
+import { connectWebSocket, formatPriceData, CryptoData } from '../../services/websocketService';
 import Config from 'react-native-config';
 import { stylesCollections } from './styles';
 import Header from '../../components/Header';
@@ -65,19 +65,20 @@ export const Home: React.FC = () => {
       });
     });
 
-    const tradeWs = connectWebSocket(TRADES_WS_URL!, (data) => {
-      const formattedData = formatTradeData(data);
-      const significantData = filterSignificantData([formattedData], symbols);
+    // functionality to handle trade data, made to demonstrate skill in handling trade data
+    // const tradeWs = connectWebSocket(TRADES_WS_URL!, (data) => {
+    //   const formattedData = formatTradeData(data);
+    //   const significantData = filterSignificantData([formattedData], symbols);
 
-      if (significantData.length > 0) {
-        const item = significantData[0];
-        updateChartData(item.name, [item]);
-      }
-    });
+    //   if (significantData.length > 0) {
+    //     const item = significantData[0];
+    //     updateChartData(item.name, [item]);
+    //   }
+    // });
 
     return () => {
       priceWs.close();
-      tradeWs.close();
+      // tradeWs.close();
     };
   }, []);
 

@@ -83,6 +83,8 @@ Este arquivo define a navegação por abas na parte inferior da aplicação, com
 
 Este projeto é uma aplicação completa para monitoramento de criptomoedas, com gráficos dinâmicos, atualização em tempo real e navegação intuitiva. A arquitetura do projeto foi projetada para ser escalável e de fácil manutenção, utilizando os melhores padrões e práticas de desenvolvimento.
 
+App estável e rodando para ios e android.
+
 
 OBS: Se faz necessária uma api websocket privada ao invés dessa gratuita, limitada e que tem muitos acessos globalmente. 
 Isso foi analisado para melhor obtenção de dados com o intuito de alcançar uma performance de excelência na exibição e no controle dos mesmos, garantindo maior performance e estabilidade do app.

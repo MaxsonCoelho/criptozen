@@ -51,23 +51,24 @@ export const formatPriceData = (data: any): CryptoData[] => {
 };
 
 // Format trade data received from WebSocket
-export const formatTradeData = (data: any): CryptoData => {
-  try {
-    return {
-      name: data.s,
-      price: parseFloat(data.p),
-      volume: parseFloat(data.q), 
-      variation: 0,
-      timestamp: new Date().toISOString(),
-    };
-  } catch (error) {
-    console.error('Erro ao formatar dados de trade:', error);
-    return {
-      name: '',
-      price: 0,
-      volume: 0,
-      variation: 0,
-      timestamp: new Date().toISOString(),
-    };
-  }
-};
+// designed to deal with trade data, but it would require more time
+// export const formatTradeData = (data: any): CryptoData => {
+//   try {
+//     return {
+//       name: data.s,
+//       price: parseFloat(data.p),
+//       volume: parseFloat(data.q), 
+//       variation: 0,
+//       timestamp: new Date().toISOString(),
+//     };
+//   } catch (error) {
+//     console.error('Erro ao formatar dados de trade:', error);
+//     return {
+//       name: '',
+//       price: 0,
+//       volume: 0,
+//       variation: 0,
+//       timestamp: new Date().toISOString(),
+//     };
+//   }
+// };
